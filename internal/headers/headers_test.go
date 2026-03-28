@@ -15,9 +15,16 @@ func TestHeaderParse(t *testing.T) {
 	n, done, err := headers.Parse(data)
 	require.NoError(t, err)
 	require.NotNil(t, headers)
-	assert.Equal(t, "localhost:42069", headers.Get("Host"))
-	assert.Equal(t, "barbar", headers.Get("FooFoo"))
-	assert.Equal(t, "", headers.Get("MissingKey"))
+	host, ok := headers.Get("Host")
+	assert.True(t, ok)
+	assert.Equal(t, "localhost:42069", host)
+
+	foofoo, ok := headers.Get("FooFoo")
+	assert.True(t, ok)
+	assert.Equal(t, "barbar", foofoo)
+
+	_, ok = headers.Get("MissingKey")
+	assert.False(t, ok)
 	assert.Equal(t, 58, n)
 	assert.True(t, done)
 
@@ -30,7 +37,7 @@ func TestHeaderParse(t *testing.T) {
 	assert.False(t, done)
 
 	// Test: Invalid token
-	data  =[]byte("H©st: localhost:42069\r\n\r\n")
+	data  = []byte("H©st: localhost:42069\r\n\r\n")
 	n, done, err = headers.Parse(data)
 	require.Error(t, err)
 	assert.Equal(t, 0, n)
@@ -42,8 +49,9 @@ func TestHeaderParse(t *testing.T) {
 	n, done, err = headers.Parse(data)
 	require.NoError(t, err)
 	require.NotNil(t, headers)
-	assert.Equal(t, "localhost:42069, localhost:42069", headers.Get("HOST"))
+
+	host, ok = headers.Get("HOST")
+	assert.True(t, ok)
+	assert.Equal(t, "localhost:42069, localhost:42069", host)
 	assert.False(t, done)
-
-
 }

@@ -1,4 +1,4 @@
-# Http Body
+# CH6 - Http Body
 
 A user agent SHOULD send Content-Length in a request...
 And "should" has a specific meaning in RFCs per RFC2119:
